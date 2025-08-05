@@ -1,0 +1,1 @@
+pdf.add_font("Arial", "", "arial.ttf", uni=True)
