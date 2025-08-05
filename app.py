@@ -216,24 +216,20 @@ def generate_insights(metrics, age):
     return insights
 
 
-# Function to generate PDF report with improved design
 from fpdf import FPDF
 
 def generate_pdf_report(name, weight, height, metrics, insights):
     pdf = FPDF()
     pdf.add_page()
 
-    # Title
     pdf.set_font("Helvetica", "B", 16)
     pdf.cell(200, 10, f"{name}'s Body Composition Report", ln=True, align='C')
 
-    # Basic Info
     pdf.set_font("Helvetica", "", 12)
     pdf.ln(10)
     pdf.cell(0, 10, f"Weight: {weight} kg", ln=True)
     pdf.cell(0, 10, f"Height: {height} cm", ln=True)
 
-    # Metrics Section
     pdf.ln(5)
     pdf.set_font("Helvetica", "B", 14)
     pdf.cell(0, 10, "Health Metrics:", ln=True)
@@ -242,7 +238,6 @@ def generate_pdf_report(name, weight, height, metrics, insights):
     for key, value in metrics.items():
         pdf.cell(0, 10, f"{key}: {value}", ln=True)
 
-    # Insights Section
     pdf.ln(5)
     pdf.set_font("Helvetica", "B", 14)
     pdf.cell(0, 10, "Insights:", ln=True)
@@ -251,12 +246,9 @@ def generate_pdf_report(name, weight, height, metrics, insights):
     for insight in insights:
         pdf.multi_cell(0, 10, f"- {insight}")
 
-   filename = f"{name}_body_composition_summary.pdf"
-pdf.output(filename)
-return filename
-
-
-
+    filename = f"{name}_body_composition_summary.pdf"
+    pdf.output(filename)
+    return filename
 
 # Streamlit App
 st.title("Body Composition Analyzer")
