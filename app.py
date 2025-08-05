@@ -217,133 +217,43 @@ def generate_insights(metrics, age):
 
 
 # Function to generate PDF report with improved design
+from fpdf import FPDF
+
 def generate_pdf_report(name, weight, height, metrics, insights):
     pdf = FPDF()
     pdf.add_page()
 
-    # Set Font and Colors
-    pdf.set_auto_page_break(auto=True, margin=15)
-    pdf.add_font("Arial", "", "arial.ttf", uni=True)
-    pdf.add_font("Arial", "B", "arialbd.ttf", uni=True)
+    # Title
+    pdf.set_font("Helvetica", "B", 16)
+    pdf.cell(200, 10, f"{name}'s Body Composition Report", ln=True, align='C')
 
-    # Header with gradient effect
-    pdf.set_fill_color(46, 139, 87)  # Green background
-    pdf.rect(0, 0, 210, 40, style="F")
-    pdf.set_text_color(255, 255, 255)  # White text
-    pdf.set_font("Arial", style="B", size=24)
-    pdf.cell(0, 20, txt="BODY COMPOSITION SUMMARY", ln=True, align="C")
-    pdf.set_font("Arial", style="", size=12)
-    pdf.cell(0, 10, txt=f"Generated for: {name}", ln=True, align="C")
+    # Basic Info
+    pdf.set_font("Helvetica", "", 12)
     pdf.ln(10)
+    pdf.cell(0, 10, f"Weight: {weight} kg", ln=True)
+    pdf.cell(0, 10, f"Height: {height} cm", ln=True)
 
-    # User Profile Section with colored box
-    pdf.set_fill_color(240, 248, 255)  # Light blue background
-    pdf.rect(10, 50, 190, 30, style="F")
-    pdf.set_text_color(0, 0, 0)  # Black text
-    pdf.set_font("Arial", style="B", size=14)
-    pdf.set_xy(15, 55)
-    pdf.cell(0, 10, txt="USER PROFILE", ln=True)
-    pdf.set_font("Arial", size=12)
-    pdf.set_x(15)
-    pdf.cell(95, 10, txt=f"Weight: {weight} kg", ln=0)
-    pdf.cell(95, 10, txt=f"Height: {height} cm", ln=1)
-    pdf.ln(10)
-
-    # Metrics Section with styled table
-    pdf.set_font("Arial", style="B", size=16)
-    pdf.set_fill_color(46, 139, 87)  # Green header
-    pdf.set_text_color(255, 255, 255)  # White text
-    pdf.cell(0, 12, txt="KEY BODY METRICS", ln=True, align="C", fill=True)
-
-    # Table header
-    pdf.set_font("Arial", style="B", size=12)
-    pdf.set_fill_color(220, 220, 220)  # Light gray for alternating rows
-    pdf.set_text_color(0, 0, 0)  # Black text
-
-    # Table data with alternating row colors
-    data = [
-        ["BMI", f"{metrics['BMI']}"],
-        ["Body Fat Rate", f"{metrics['Body Fat Rate']}%"],
-        ["Muscle Mass", f"{metrics['Muscle Mass (kg)']} kg"],
-        ["Lean Body Weight", f"{metrics['Lean Body Weight (kg)']} kg"],
-        ["Visceral Fat Level", f"{metrics['Visceral Fat Level']}"],
-        ["Body Water Rate", f"{metrics['Body Water Rate (%)']}%"],
-        ["Bone Mass", f"{metrics['Bone Mass (kg)']} kg"],
-        ["Basal Metabolic Rate (BMR)", f"{metrics['BMR (kcal)']} kcal"],
-        ["Protein Level", f"{metrics['Protein Level (%)']}%"],
-        ["Metabolic Age", f"{metrics['Metabolic Age']} years"]
-    ]
-
-    col_width = [120, 70]
-    row_height = 10
-    for i, row in enumerate(data):
-        # Alternating row colors
-        if i % 2 == 0:
-            pdf.set_fill_color(245, 245, 245)  # Very light gray
-        else:
-            pdf.set_fill_color(255, 255, 255)  # White
-
-        pdf.set_font("Arial", style="B", size=11)
-        pdf.cell(col_width[0], row_height, txt=row[0], border="LTB", fill=True)
-        pdf.set_font("Arial", size=11)
-        pdf.cell(col_width[1], row_height, txt=row[1], border="RTB", ln=True, fill=True)
-    pdf.ln(10)
-
-    # Visual Section Header
-    pdf.set_fill_color(46, 139, 87)  # Green header
-    pdf.set_text_color(255, 255, 255)  # White text
-    pdf.set_font("Arial", style="B", size=16)
-    pdf.cell(0, 12, txt="VISUAL BREAKDOWN", ln=True, align="C", fill=True)
+    # Metrics Section
     pdf.ln(5)
+    pdf.set_font("Helvetica", "B", 14)
+    pdf.cell(0, 10, "Health Metrics:", ln=True)
 
-    # Two charts side by side
-    pie_chart_path = create_pie_chart(metrics)
-    bar_chart_path = create_bar_chart(metrics)
+    pdf.set_font("Helvetica", "", 12)
+    for key, value in metrics.items():
+        pdf.cell(0, 10, f"{key}: {value}", ln=True)
 
-    # Chart titles
-    pdf.set_text_color(0, 0, 0)  # Black text
-    pdf.set_font("Arial", style="B", size=12)
-    pdf.cell(95, 10, txt="Body Composition", ln=0, align="C")
-    pdf.cell(95, 10, txt="Key Metrics", ln=1, align="C")
-
-    # Add charts
-    pdf.image(pie_chart_path, x=10, y=pdf.get_y(), w=90)
-    pdf.image(bar_chart_path, x=110, y=pdf.get_y(), w=90)
-    os.unlink(pie_chart_path)
-    os.unlink(bar_chart_path)
-    pdf.ln(100)  # Space for the charts
-
-    # Insights Section with styled box
-    pdf.set_fill_color(46, 139, 87)  # Green header
-    pdf.set_text_color(255, 255, 255)  # White text
-    pdf.set_font("Arial", style="B", size=16)
-    pdf.cell(0, 12, txt="PERSONALIZED INSIGHTS", ln=True, align="C", fill=True)
+    # Insights Section
     pdf.ln(5)
+    pdf.set_font("Helvetica", "B", 14)
+    pdf.cell(0, 10, "Insights:", ln=True)
 
-    # Style for insights
-    pdf.set_text_color(0, 0, 0)  # Black text
-    pdf.set_font("Arial", size=11)
-    pdf.set_fill_color(240, 248, 255)  # Light blue background
-    pdf.rect(10, pdf.get_y(), 190, 8 * len(insights), style="F")
-
-    pdf.set_xy(15, pdf.get_y() + 5)
+    pdf.set_font("Helvetica", "", 12)
     for insight in insights:
-        pdf.multi_cell(180, 8, txt=insight)
-    pdf.ln(10)
+        pdf.multi_cell(0, 10, f"- {insight}")
 
-    # Custom footer with gradient
-    pdf.set_y(-35)
-    pdf.set_fill_color(46, 139, 87)  # Green background
-    pdf.rect(0, pdf.get_y(), 210, 35, style="F")
-    pdf.set_text_color(255, 255, 255)  # White text
-    pdf.set_font("Arial", style="B", size=10)
-    pdf.cell(0, 10, txt="Thank you for using the Body Composition Analyzer!", ln=True, align="C")
-    pdf.set_font("Arial", size=9)
-    pdf.cell(0, 7, txt=f"Report generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}", ln=True, align="C")
-    pdf.cell(0, 7, txt="For more information, contact support@bodycomposition.com", ln=True, align="C")
+    # Output PDF
+    pdf.output("report.pdf")
 
-    # Save PDF
-    pdf.output(f"{name}_body_composition_summary.pdf")
 
 
 # Streamlit App
