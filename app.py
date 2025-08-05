@@ -251,8 +251,10 @@ def generate_pdf_report(name, weight, height, metrics, insights):
     for insight in insights:
         pdf.multi_cell(0, 10, f"- {insight}")
 
-    # Output PDF
-    pdf.output("report.pdf")
+   filename = f"{name}_body_composition_summary.pdf"
+pdf.output(filename)
+return filename
+
 
 
 
